@@ -4144,11 +4144,14 @@ ACTOR Future<int> cli(CLIOptions opt, LineNoise* plinenoise) {
 						is_error = true;
 					} else {
 						getTransaction(db, tr, options, intrans);
-						tr->clear(blobBuilderRangeKey);
-
-						if (!intrans) {
-							wait(commitTransaction(tr));
+						if (intrans) {
+							fprintf(stderr,
+							        "ERROR: blob builder state updates must be run in their own transaction.\n");
 						}
+
+						tr->setOption(FDBTransactionOptions::ACCESS_SYSTEM_KEYS);
+						tr->clear(blobBuilderRangeKey);
+						wait(commitTransaction(tr));
 					}
 					continue;
 				}
@@ -4164,12 +4167,15 @@ ACTOR Future<int> cli(CLIOptions opt, LineNoise* plinenoise) {
 						is_error = true;
 					} else {
 						getTransaction(db, tr, options, intrans);
+						if (intrans) {
+							fprintf(stderr,
+							        "ERROR: blob builder state updates must be run in their own transaction.\n");
+						}
+
+						tr->setOption(FDBTransactionOptions::ACCESS_SYSTEM_KEYS);
 						KeyRangeRef blobRange(tokens[1], tokens[2]);
 						tr->set(blobBuilderRangeKey, BinaryWriter::toValue(blobRange, IncludeVersion()));
-
-						if (!intrans) {
-							wait(commitTransaction(tr));
-						}
+						wait(commitTransaction(tr));
 					}
 					continue;
 				}
