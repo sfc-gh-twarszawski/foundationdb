@@ -583,6 +583,9 @@ public:
 	int64_t TIME_KEEPER_DELAY;
 	int64_t TIME_KEEPER_MAX_ENTRIES;
 
+	// BlobBuilder
+	bool BLOB_BUILDER_ENABLED;
+
 	// Fast Restore
 	// TODO: After 6.3, review FR knobs, remove unneeded ones and change default value
 	int64_t FASTRESTORE_FAILURE_TIMEOUT;

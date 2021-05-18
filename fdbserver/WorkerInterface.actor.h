@@ -887,6 +887,7 @@ ACTOR Future<Void> dataDistributor(DataDistributorInterface ddi, Reference<Async
 ACTOR Future<Void> ratekeeper(RatekeeperInterface rki, Reference<AsyncVar<ServerDBInfo>> db);
 ACTOR Future<Void> storageCacheServer(StorageServerInterface interf, uint16_t id, Reference<AsyncVar<ServerDBInfo>> db);
 ACTOR Future<Void> backupWorker(BackupInterface bi, InitializeBackupRequest req, Reference<AsyncVar<ServerDBInfo>> db);
+ACTOR Future<Void> blobbuilder(Database* db);
 
 void registerThreadForProfiling();
 void updateCpuProfiler(ProfilerRequest req);

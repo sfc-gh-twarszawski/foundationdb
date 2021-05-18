@@ -386,6 +386,9 @@ extern const KeyRef fdbShouldConsistencyCheckBeSuspended;
 // Request latency measurement key
 extern const KeyRef latencyBandConfigKey;
 
+// Key to store blob builder key range
+extern const KeyRef blobBuilderRangeKey;
+
 // Keyspace to maintain wall clock to version map
 extern const KeyRangeRef timeKeeperPrefixRange;
 extern const KeyRef timeKeeperVersionKey;

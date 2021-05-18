@@ -5,6 +5,7 @@ set(FDBSERVER_SRCS
   BackupProgress.actor.cpp
   BackupProgress.actor.h
   BackupWorker.actor.cpp
+  BlobBuilder.actor.cpp
   ClusterController.actor.cpp
   ConflictSet.h
   CoordinatedState.actor.cpp

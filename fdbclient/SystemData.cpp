@@ -765,6 +765,9 @@ const KeyRef fdbShouldConsistencyCheckBeSuspended = LiteralStringRef("\xff\x02/C
 // Request latency measurement key
 const KeyRef latencyBandConfigKey = LiteralStringRef("\xff\x02/latencyBandConfig");
 
+// Key to store blob builder key range
+const KeyRef blobBuilderRangeKey = LiteralStringRef("\xff\x02/blobBuilderKeyRange");
+
 // Keyspace to maintain wall clock to version map
 const KeyRangeRef timeKeeperPrefixRange(LiteralStringRef("\xff\x02/timeKeeper/map/"),
                                         LiteralStringRef("\xff\x02/timeKeeper/map0"));

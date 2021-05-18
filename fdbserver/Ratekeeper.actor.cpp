@@ -1427,6 +1427,10 @@ ACTOR Future<Void> ratekeeper(RatekeeperInterface rkInterf, Reference<AsyncVar<S
 	self.addActor.send(
 	    recurring([selfPtr]() { refreshStorageServerCommitCost(selfPtr); }, SERVER_KNOBS->TAG_MEASUREMENT_INTERVAL));
 
+	if (SERVER_KNOBS->BLOB_BUILDER_ENABLED) {
+		self.addActor.send(blobbuilder(&self.db));
+	}
+
 	TraceEvent("RkTLogQueueSizeParameters", rkInterf.id())
 	    .detail("Target", SERVER_KNOBS->TARGET_BYTES_PER_TLOG)
 	    .detail("Spring", SERVER_KNOBS->SPRING_BYTES_TLOG)

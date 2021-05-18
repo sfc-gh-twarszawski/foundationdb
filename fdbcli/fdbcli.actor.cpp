@@ -34,6 +34,7 @@
 #include "fdbclient/Schemas.h"
 #include "fdbclient/CoordinationInterface.h"
 #include "fdbclient/FDBOptions.g.h"
+#include "fdbclient/SystemData.h"
 #include "fdbclient/TagThrottle.h"
 
 #include "fdbclient/ThreadSafeTransaction.h"
@@ -45,6 +46,7 @@
 
 #include "fdbcli/FlowLineNoise.h"
 #include "fdbcli/fdbcli.actor.h"
+#include "flow/serialize.h"
 
 #include <cinttypes>
 #include <type_traits>
@@ -681,6 +683,8 @@ void initHelp() {
 	hiddenCommands.insert("expensive_data_check");
 	hiddenCommands.insert("datadistribution");
 	hiddenCommands.insert("snapshot");
+	hiddenCommands.insert("clear_blobbuilder_range");
+	hiddenCommands.insert("set_blobbuilder_range");
 }
 
 void printVersion() {
@@ -4124,6 +4128,47 @@ ACTOR Future<int> cli(CLIOptions opt, LineNoise* plinenoise) {
 									        address_interface[tokens[i]].first);
 							}
 							printf("Attempted to kill and check %zu processes\n", tokens.size() - 1);
+						}
+					}
+					continue;
+				}
+
+				if (tokencmp(tokens[0], "clear_blobbuilder_range")) {
+					if (!writeMode) {
+						fprintf(stderr, "ERROR: writemode must be enabled to clear blob builder state.\n");
+						is_error = true;
+						continue;
+					}
+					if (tokens.size() != 1) {
+						printf("Usage: clear_blobbuilder_range\n");
+						is_error = true;
+					} else {
+						getTransaction(db, tr, options, intrans);
+						tr->clear(blobBuilderRangeKey);
+
+						if (!intrans) {
+							wait(commitTransaction(tr));
+						}
+					}
+					continue;
+				}
+
+				if (tokencmp(tokens[0], "set_blobbuilder_range")) {
+					if (!writeMode) {
+						fprintf(stderr, "ERROR: writemode must be enabled to set blob builder state.\n");
+						is_error = true;
+						continue;
+					}
+					if (tokens.size() != 3) {
+						printf("Usage: set_blobbuilder_range startKey endKey\n");
+						is_error = true;
+					} else {
+						getTransaction(db, tr, options, intrans);
+						KeyRangeRef blobRange(tokens[1], tokens[2]);
+						tr->set(blobBuilderRangeKey, BinaryWriter::toValue(blobRange, IncludeVersion()));
+
+						if (!intrans) {
+							wait(commitTransaction(tr));
 						}
 					}
 					continue;
